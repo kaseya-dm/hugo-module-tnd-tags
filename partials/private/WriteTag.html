@@ -1,0 +1,49 @@
+{{/*
+  WriteTag
+
+  @author @regisphilibert
+
+  @context Map
+    String (.element)
+    String (.inner)
+    Map (.attr)
+
+  @access private
+
+  @return String
+
+  @example - Go Template
+  {{- with partialCached "tnd-tags/private/WriteTag" . . -}}
+  {{- . | safeHTML -}}
+  {{- end -}}
+*/}}
+
+{{ $return := "" }}
+{{ with $tag := . }}
+  {{ $attributes := slice }}
+  {{ with .attr }}
+    {{ range $key, $value := . }}
+      {{ $attr := "" }}
+      {{ with $value }}
+        {{ $attr = printf `%s="%v"` $key $value }}
+      {{ else }}
+        {{ $attr = printf `%s` $key }}
+      {{ end }}
+      {{ $attributes = $attributes | append $attr }}
+    {{ end }}
+  {{ end }}
+  {{ $close := isset $tag "inner" }}
+  {{ $close = or $close (eq .name "script") }}
+  {{ $attributes_print := "" }}
+  {{ with $attributes }}
+    {{ $attributes_print = delimit $attributes " " }}
+  {{ end }}
+  {{ if $close }}
+    {{ $inner := default "" $tag.inner }}
+    {{ $return = printf `<%s %s>%s</%s>` $tag.name $attributes_print $inner $tag.name }}
+  {{ else }}
+    {{ $return = printf `<%s %s>` $tag.name $attributes_print }}
+  {{ end }}
+{{ end }}
+
+{{ return $return }}

@@ -1,10 +1,8 @@
-This is a template repo. To start.
+# Tags Hugo Module
 
-search `{moduleName}` through the project and replace it with the module identifier (ex: `socials` for `hugo-module-tnd-socials`)
+Hugo Module to genererate HTML tags. 
 
-# {moduleName} Hugo Module
-
-(intro)
+Remove HTML/templating concern when having to generate large amount of tags (SEO etc...)
 
 ## Requirements
 
@@ -27,41 +25,65 @@ Configure your project's module to import this module:
 # config.yaml
 module:
   imports:
-  - path: github.com/theNewDynamic/hugo-module-tnd-{moduleName}
+  - path: github.com/theNewDynamic/hugo-module-tnd-tags
 ```
 
 ## Usage
 
-### Some Partial/Feature
+### tag
+
+The tag partial takes 3 parameters
+- name*: the tag's name: `link` or `script` etc...
+- inner: The tag's content. If not set, the tag will self close.
+- attr: A map with the tag's attributes.
 
 #### Examples
 
-### Settings
-
-Settings are added to the project's parameter under the `tnd_{moduleName}` map as shown below.
-
-```yaml
-# config.yaml
-params:
-  tnd_{moduleName}:
-    [...]
+##### title
+```
+{{ partial dict "name" "title" "inner" "Hugo Tags!") }}
 ```
 
-#### Configure Key 1
+```html
+<title>Hugo Tags!</title>
+````
 
-#### Configure Key 2
-
-Given the example above, passing the following arguments to `tnd-imgix/GetSRC`
+##### link
 ```
-{{ $src := "/uploads/an-image.jpg" }}
-{{ $args := dict "src" $src "width" 1024 "pixel" 2 "ch" "Width,DPR" }}
+{{ range resources.Match "fonts/**/*.woff*" }}
+{{ $params := dict "name" "link" "attr" (dict "href" .RelPermalink "rel" "prefetch" "as" "font" "crossorigin" "") }}
+{{ partial "tnd-tags/tag" $params }}
 ```
 
-Will produce: `https://imgix.domain.com/image.jpg?w=1024&dpr=2&ch=Width,DPR`
+```html
+<link as="font" crossorigin href="/fonts/files/4fe94f2e-7892-4785-9663-0350a7adf8c0.woff" rel="prefetch">
+<link as="font" crossorigin href="/fonts/files/5b4bd9d6-75be-4d76-8292-7f6434b9e997.woff" rel="prefetch">
+<link as="font" crossorigin href="/fonts/files/6e8e8927-5a98-49ae-9123-db1798ec6d92.woff2" rel="prefetch">
+```
 
-#### Defaults
+##### script
+```
+{{ with resources.Get "main.js" }}
+  {{ $param := dict "name" "script" "attr" (dict "type" "text/javascript" "src" .RelPermalink "defer" "")) }}
+  {{ partial "tnd-tags/tag $param }}
+{{ end }}
+```
 
-ld copy/paste the above to your settings and append with new extensions.
+```html
+<script defer src="/js/main.js" type="text/javascript"></script>
+```
+----
+```
+{{ partial "tnd-tags/tag" (dict "name" "script" "inner" `
+  console.log('bonjour vous!')
+`) }}
+```
+```html
+<script >
+  var text = 'Hello Tag!';
+  console.log(text);
+</script>
+```
 
 ## theNewDynamic
 
