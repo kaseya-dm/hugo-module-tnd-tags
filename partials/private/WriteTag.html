@@ -6,13 +6,14 @@
   @context Map
     String (.element)
     String (.inner)
-    String (.quote)
-
     Map (.attr)
 
   @access private
 
   @return String
+
+  @use
+    - private/WriteAttribute
 
   @example - Go Template
   {{- with partialCached "tnd-tags/private/WriteTag" . . -}}
@@ -25,17 +26,10 @@
   {{ $attributes := slice }}
   {{ with .attr }}
     {{ range $key, $value := . }}
-      {{ $attr := "" }}
-      {{ with $value }}
-        {{ if eq $.quotes "single" }}
-          {{ $attr = printf `%s='%v'` $key $value }}
-        {{ else }}
-          {{ $attr = printf `%s="%v"` $key $value }}
-        {{ end }}
-      {{ else }}
-        {{ $attr = printf `%s` $key }}
+      {{ $params := dict "key" $key "value" $value }}
+      {{ with partialCached "tnd-tags/private/WriteAttribute" $params $params }}
+        {{ $attributes = $attributes | append . }}
       {{ end }}
-      {{ $attributes = $attributes | append $attr }}
     {{ end }}
   {{ end }}
   {{ $close := isset $tag "inner" }}
