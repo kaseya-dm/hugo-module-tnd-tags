@@ -22,8 +22,15 @@
 */}}
 
 {{ $return := "" }}
+{{ $void_elements := slice "area" "base" "br" "col" "embed" "hr" "img" "input" "link" "meta" "param" "source" "track" "wbr" }}
 {{ with $tag := . }}
   {{ $attributes := slice }}
+  {{ $void_element := in $void_elements .name }}
+  {{ if $void_element }}
+    {{ with .inner }}
+      {{ partial "tnd-tags/warn" (printf "Tag <%s> is a void element and must self close. It's `inner` setting (%s) will be ignored." $tag.name $tag.inner) }}
+    {{ end }}
+  {{ end }}
   {{ with .attr }}
     {{ range $key, $value := . }}
       {{ $params := dict "key" $key "value" $value }}
@@ -33,7 +40,7 @@
     {{ end }}
   {{ end }}
   {{ $close := isset $tag "inner" }}
-  {{ $close = or $close (eq .name "script") }}
+  {{ $close = and $close (not $void_element) }}
   {{ $attributes_print := "" }}
   {{ with $attributes }}
     {{ $attributes_print = delimit $attributes " " }}
