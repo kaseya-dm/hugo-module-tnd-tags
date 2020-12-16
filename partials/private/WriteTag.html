@@ -39,8 +39,10 @@
       {{ end }}
     {{ end }}
   {{ end }}
-  {{ $close := isset $tag "inner" }}
-  {{ $close = and $close (not $void_element) }}
+  {{ $close := true }}
+  {{ if $void_element }}
+    {{ $close = false }}
+  {{ end }}
   {{ $attributes_print := "" }}
   {{ with $attributes }}
     {{ $attributes_print = delimit $attributes " " }}
