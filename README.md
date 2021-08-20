@@ -64,7 +64,14 @@ The tag partial takes 3 parameters
 ##### script
 ```
 {{ with resources.Get "main.js" }}
-  {{ $param := dict "name" "script" "attr" (dict "type" "text/javascript" "src" .RelPermalink "defer" "")) }}
+  {{ $param := dict 
+    "name" "script" 
+    "attr" (dict 
+      "type" "text/javascript" 
+      "src" .RelPermalink 
+      "defer" ""
+     )
+   ) }}
   {{ partial "tnd-tags/tag $param }}
 {{ end }}
 ```
@@ -74,9 +81,10 @@ The tag partial takes 3 parameters
 ```
 ----
 ```
-{{ partial "tnd-tags/tag" (dict "name" "script" "inner" `
-  console.log('bonjour vous!')
-`) }}
+{{ partial "tnd-tags/tag" (dict 
+  "name" "script" 
+  "inner" `console.log('bonjour vous!')`
+) }}
 ```
 ```html
 <script >
