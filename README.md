@@ -41,7 +41,7 @@ The tag partial takes 3 parameters
 
 ##### title
 ```
-{{ partial dict "name" "title" "inner" "Hugo Tags!") }}
+{{ partial "tnd-tags/tag" (dict "name" "title" "inner" "Hugo Tags!") }}
 ```
 
 ```html
